@@ -1,16 +1,10 @@
 ﻿using Domain.UserAggregate;
 using Microsoft.AspNetCore.Identity;
-using Persistence.Abstractions;
 
-namespace Persistence.Postgres.Repositories;
+namespace Persistence.Postgres.IdentityStorages;
 
-public sealed class RoleRepository : IRoleRepository
+public sealed class RoleStorage : IRoleStore<Role>
 {
-    public void Dispose()
-    {
-        throw new NotImplementedException();
-    }
-
     public Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
@@ -59,5 +53,9 @@ public sealed class RoleRepository : IRoleRepository
     public Task<Role> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
+    }
+    
+    public void Dispose()
+    {
     }
 }

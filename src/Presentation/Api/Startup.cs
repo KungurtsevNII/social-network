@@ -1,9 +1,10 @@
-﻿using Domain.UserAggregate;
+﻿using Application;
+using Domain.UserAggregate;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Identity;
 using Persistence.Postgres;
 using Persistence.Postgres.Migrations;
-using Persistence.Postgres.Repositories;
+using Services.Auth;
 
 namespace Api;
 
@@ -21,6 +22,8 @@ public static class Startup
     {
         builder.Services
             .AddControllers().Services
+            .AddApplicationModule()
+            .AddAuthServicesModule()
             .AddMigrationsModule(builder.Configuration)
             .AddPersistenceModule()
             .AddEndpointsApiExplorer()
@@ -30,6 +33,8 @@ public static class Startup
             .AddIdentity<User, Role>()
             .AddSignInManager<SignInManager<User>>()
             .AddDefaultTokenProviders();
+        
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
         return builder;
     }

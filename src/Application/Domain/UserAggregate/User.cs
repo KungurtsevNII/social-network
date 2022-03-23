@@ -41,4 +41,42 @@ public sealed class User : AggregateRoot<long>
         TwoFactorEnabled = twoFactorEnabled;
         _roles = userRoles;
     }
+    
+    private User(
+        string email,
+        string normalizedEmail, 
+        bool emailConfirmed, 
+        string passwordHash, 
+        string? phoneNumber,
+        bool phoneNumberConfirmed,
+        bool twoFactorEnabled,
+        List<Role> userRoles) : base(0)
+    {
+        Email = email;
+        NormalizedEmail = normalizedEmail;
+        EmailConfirmed = emailConfirmed;
+        PasswordHash = passwordHash;
+        PhoneNumber = phoneNumber;
+        PhoneNumberConfirmed = phoneNumberConfirmed;
+        TwoFactorEnabled = twoFactorEnabled;
+        _roles = userRoles;
+    }
+
+    public static User Create(
+        string email,
+        string passwordHash, 
+        string? phoneNumber,
+        bool twoFactorEnabled,
+        List<Role> userRoles)
+    {
+        return new User(
+            email,
+            email.ToLower(),
+            false,
+            passwordHash,
+            phoneNumber,
+            false,
+            twoFactorEnabled,
+            userRoles);
+    }
 }
