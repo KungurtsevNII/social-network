@@ -7,6 +7,12 @@ internal static class UserRepositorySql
                password_hash, phone_number, phone_number_confirmed, two_factor_enabled
         FROM users
         WHERE normalized_email = @normalizedEmail;";
+    
+    internal const string FindByIdSql = @"
+        SELECT id, email, normalized_email, email_confirmed,
+               password_hash, phone_number, phone_number_confirmed, two_factor_enabled
+        FROM users
+        WHERE id = @id;";
 
     internal const string SaveSql = @"
         INSERT INTO users (

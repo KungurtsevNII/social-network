@@ -57,4 +57,30 @@ public class UserRepository : IUserRepository
             userRecord.TwoFactorEnabled,
             new List<Role>());
     }
+    
+    public async Task<User?> FindByIdAsync(long id, CancellationToken ct)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("id", id, DbType.Int64);
+        
+        using var pgConnection = _dbContext.CreateConnection();
+        pgConnection.Open();
+        var userRecord = await pgConnection.QuerySingleOrDefaultAsync<UserRecord>(UserRepositorySql.FindByNormalizedSql, parameters);
+
+        if (userRecord is null)
+        {
+            return null;
+        }
+        
+        return new User(
+            userRecord.Id,
+            userRecord.Email,
+            userRecord.NormalizedEmail,
+            userRecord.EmailConfirmed,
+            userRecord.PasswordHash,
+            userRecord.PhoneNumber,
+            userRecord.PhoneNumberConfirmed,
+            userRecord.TwoFactorEnabled,
+            new List<Role>());
+    }
 }
