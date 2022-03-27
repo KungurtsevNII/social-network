@@ -1,33 +1,35 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Application.Exceptions;
+﻿using Application.Exceptions;
 using Application.Services;
-using Domain.UserAggregate;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
+using Persistence.Abstractions.Repositories;
 
 namespace Application.Features.Auth.Command.Login;
 
 public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
 {
-    private readonly IUserStore<User> _userStore;
+    private readonly IUserRepository _userRepository;
     private readonly IJwtTokenGenerator _tokenGenerator;
+    private readonly IPasswordHasherService _passwordHasherService;
 
-    public LoginCommandHandler(IUserStore<User> userStore, IJwtTokenGenerator tokenGenerator)
+    public LoginCommandHandler(
+        IJwtTokenGenerator tokenGenerator, 
+        IPasswordHasherService passwordHasherService,
+        IUserRepository userRepository)
     {
-        _userStore = userStore;
         _tokenGenerator = tokenGenerator;
+        _passwordHasherService = passwordHasherService;
+        _userRepository = userRepository;
     }
 
     public async Task<LoginResult> Handle(LoginCommand command, CancellationToken ct)
     {
-        var user = await _userStore.FindByNameAsync(command.Email, ct);
+        var user = await _userRepository.FindByEmailAsync(command.Email, ct);
         if (user is null)
         {
             throw new UserNotFoundException(command.Email);
         }
 
-        var isPasswordVerified = user.PasswordHash == Hash(command.Password);
+        var isPasswordVerified = user.PasswordHash == _passwordHasherService.ComputeHash(command.Password);
 
         if (!isPasswordVerified)
         {
@@ -35,12 +37,5 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginRes
         }
 
         return new LoginResult(_tokenGenerator.CreateToken(user));
-    }
-    
-    private string Hash(string password)
-    {
-        using var md5 = MD5.Create();
-        var result = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
-        return Encoding.UTF8.GetString(result);
     }
 }

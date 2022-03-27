@@ -1,4 +1,4 @@
-﻿namespace Persistence.Postgres.IdentityStorages;
+﻿namespace Persistence.Postgres.Repositories.UserRepository.Records;
 
 public sealed class UserRecord
 {

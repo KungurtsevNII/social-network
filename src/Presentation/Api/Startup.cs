@@ -1,7 +1,8 @@
-﻿using Application;
-using Domain.UserAggregate;
+﻿using Api.Extensions;
+using Api.Services;
+using Application;
+using Application.Services;
 using FluentMigrator.Runner;
-using Microsoft.AspNetCore.Identity;
 using Persistence.Postgres;
 using Persistence.Postgres.Migrations;
 using Services.Auth;
@@ -22,19 +23,14 @@ public static class Startup
     {
         builder.Services
             .AddControllers().Services
+            .AddScoped<ICurrentUserContext, CurrentUserContext>()
+            .AddHttpContextAccessor()
             .AddApplicationModule()
             .AddAuthServicesModule()
             .AddMigrationsModule(builder.Configuration)
             .AddPersistenceModule()
-            .AddEndpointsApiExplorer()
-            .AddSwaggerGen();
-        
-        builder.Services
-            .AddIdentity<User, Role>()
-            .AddSignInManager<SignInManager<User>>()
-            .AddDefaultTokenProviders();
-        
-        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+            .AddSwaggerDocumentation()
+            .AddJwtTokenAuthentication(builder.Configuration);
 
         return builder;
     }
@@ -43,9 +39,10 @@ public static class Startup
     {
         app.UseSwagger();
         app.UseSwaggerUI();
-
         app.UseHttpsRedirection();
+        
         app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
         return app;
     }

@@ -7,5 +7,6 @@ public static class AuthServicesModule
 {
     public static IServiceCollection AddAuthServicesModule(this IServiceCollection services) =>
         services
-            .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+            .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
+            .AddSingleton<IPasswordHasherService, PasswordHasherService>();
 }

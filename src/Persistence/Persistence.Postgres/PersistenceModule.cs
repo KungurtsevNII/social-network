@@ -1,17 +1,18 @@
-﻿using Domain.UserAggregate;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Persistence.Abstractions;
-using Persistence.Postgres.IdentityStorages;
+using Persistence.Abstractions.Repositories;
+using Persistence.Postgres.Repositories.UserRepository;
 
 namespace Persistence.Postgres;
 
 public static class PersistenceModule
 {
-    public static IServiceCollection AddPersistenceModule(this IServiceCollection services) => 
-        services
-            .AddSingleton<IDbContext, DbContext>()
-            .AddScoped<IUserStore<User>, UserStorage>()
-            .AddScoped<IRoleStore<Role>, RoleStorage>()
-        ;
+    public static IServiceCollection AddPersistenceModule(this IServiceCollection services)
+    {
+        services.AddSingleton<IDbContext, DbContext>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+        return services;
+    }
 }
