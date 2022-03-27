@@ -20,6 +20,9 @@ public sealed class User : AggregateRoot<long>
     
     private List<Role> _roles;
     public IReadOnlyList<Role> Roles => _roles;
+    
+    private List<long> _friends;
+    public IReadOnlyList<long> Friends => _friends;
 
     public User(
         long id, 
@@ -30,7 +33,8 @@ public sealed class User : AggregateRoot<long>
         string? phoneNumber,
         bool phoneNumberConfirmed,
         bool twoFactorEnabled,
-        List<Role> userRoles) : base(id)
+        List<Role> userRoles, 
+        List<long> friends) : base(id)
     {
         Email = email;
         NormalizedEmail = normalizedEmail;
@@ -40,6 +44,7 @@ public sealed class User : AggregateRoot<long>
         PhoneNumberConfirmed = phoneNumberConfirmed;
         TwoFactorEnabled = twoFactorEnabled;
         _roles = userRoles;
+        _friends = friends;
     }
     
     private User(
@@ -50,7 +55,8 @@ public sealed class User : AggregateRoot<long>
         string? phoneNumber,
         bool phoneNumberConfirmed,
         bool twoFactorEnabled,
-        List<Role> userRoles) : base(0)
+        List<Role> userRoles,
+        List<long> friends) : base(0)
     {
         Email = email;
         NormalizedEmail = normalizedEmail;
@@ -60,6 +66,7 @@ public sealed class User : AggregateRoot<long>
         PhoneNumberConfirmed = phoneNumberConfirmed;
         TwoFactorEnabled = twoFactorEnabled;
         _roles = userRoles;
+        _friends = friends;
     }
 
     public static User Create(
@@ -77,6 +84,21 @@ public sealed class User : AggregateRoot<long>
             phoneNumber,
             false,
             twoFactorEnabled,
-            userRoles);
+            userRoles,
+            new List<long>());
+    }
+
+    public void AddFriend(long userFriendId)
+    {
+        if (userFriendId == Id)
+        {
+            return;
+        }
+        
+        if (_friends.Exists(x => x == userFriendId))
+        {
+            return;
+        }
+        _friends.Add(userFriendId);
     }
 }

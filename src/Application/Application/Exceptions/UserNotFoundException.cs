@@ -8,4 +8,9 @@ public sealed class UserNotFoundException : NotFoundException
         : base($"User with email - {email} not found")
     {
     }
+    
+    public UserNotFoundException(long id) 
+        : base($"User with id - {id} not found")
+    {
+    }
 }

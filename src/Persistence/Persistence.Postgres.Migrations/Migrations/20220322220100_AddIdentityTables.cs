@@ -32,7 +32,7 @@ public sealed class AddIdentityTables : Migration
             
             CREATE UNIQUE INDEX IF NOT EXISTS roles_normalized_name_uix ON roles (normalized_name);
 
-            CREATE TABLE users_roles
+            CREATE TABLE IF NOT EXISTS users_roles
             (
 	            user_id BIGINT NOT NULL,
 	            role_id BIGINT NOT NULL,

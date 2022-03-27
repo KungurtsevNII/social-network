@@ -30,6 +30,13 @@ public class UserRepository : IUserRepository
         using var pgConnection = _dbContext.CreateConnection();
         pgConnection.Open();
         await pgConnection.ExecuteAsync(UserRepositorySql.SaveSql, parameters);
+        await pgConnection.ExecuteAsync(
+            UserRepositorySql.SaveFriendsSql, 
+            user.Friends.Select(x => new 
+            { 
+                userId = user.Id, 
+                friendId = x 
+            }));
     }
     
     public async Task<User?> FindByEmailAsync(string normalizedEmail, CancellationToken ct)
@@ -46,6 +53,8 @@ public class UserRepository : IUserRepository
             return null;
         }
         
+        var userFriend = await GetUserFriends(pgConnection, userRecord.Id, ct);
+        
         return new User(
             userRecord.Id,
             userRecord.Email,
@@ -55,7 +64,8 @@ public class UserRepository : IUserRepository
             userRecord.PhoneNumber,
             userRecord.PhoneNumberConfirmed,
             userRecord.TwoFactorEnabled,
-            new List<Role>());
+            new List<Role>(),
+            userFriend.ToList());
     }
     
     public async Task<User?> FindByIdAsync(long id, CancellationToken ct)
@@ -65,12 +75,14 @@ public class UserRepository : IUserRepository
         
         using var pgConnection = _dbContext.CreateConnection();
         pgConnection.Open();
-        var userRecord = await pgConnection.QuerySingleOrDefaultAsync<UserRecord>(UserRepositorySql.FindByNormalizedSql, parameters);
+        var userRecord = await pgConnection.QuerySingleOrDefaultAsync<UserRecord>(UserRepositorySql.FindByIdSql, parameters);
 
         if (userRecord is null)
         {
             return null;
         }
+
+        var userFriend = await GetUserFriends(pgConnection, userRecord.Id, ct);
         
         return new User(
             userRecord.Id,
@@ -81,6 +93,16 @@ public class UserRepository : IUserRepository
             userRecord.PhoneNumber,
             userRecord.PhoneNumberConfirmed,
             userRecord.TwoFactorEnabled,
-            new List<Role>());
+            new List<Role>(),
+            userFriend.ToList());
+    }
+
+    private async Task<IReadOnlyList<long>> GetUserFriends(IDbConnection pgConnection, long userId, CancellationToken ct)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userId, DbType.Int64);
+        
+        var friendsIds = await pgConnection.QueryAsync<long>(UserRepositorySql.FindFriendsIdsSql, parameters);
+        return friendsIds.ToList();
     }
 }

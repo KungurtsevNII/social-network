@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application.Exceptions;
+using Application.Services;
 using MediatR;
 using Persistence.Abstractions.Repositories;
 
@@ -6,21 +7,29 @@ namespace Application.Features.Users.Command.AddFriend;
 
 public sealed class AddFriendCommandHandler : IRequestHandler<AddFriendCommand>
 {
-    private readonly ICurrentUserContext _currentUserContext;
     private readonly IUserRepository _userRepository;
 
-    public AddFriendCommandHandler(
-        ICurrentUserContext currentUserContext,
-        IUserRepository userRepository)
+    public AddFriendCommandHandler(IUserRepository userRepository)
     {
-        _currentUserContext = currentUserContext;
         _userRepository = userRepository;
     }
 
     public async Task<Unit> Handle(AddFriendCommand command, CancellationToken ct)
     {
-        var currentUserId = _currentUserContext.UserId;
-        var currentUser = await _userRepository.FindByIdAsync(currentUserId, ct);
+        var currentUser = await _userRepository.FindByIdAsync(command.CurrentUserId, ct);
+        if (currentUser is null)
+        {
+            throw new UserNotFoundException(command.CurrentUserId);
+        }
+        
+        var userFriend = await _userRepository.FindByIdAsync(command.NewFriendId, ct);
+        if (userFriend is null)
+        {
+            throw new UserNotFoundException(command.NewFriendId);
+        }
+
+        currentUser.AddFriend(userFriend.Id);
+        await _userRepository.SaveAsync(currentUser, ct);
         return Unit.Value;
     }
 }
