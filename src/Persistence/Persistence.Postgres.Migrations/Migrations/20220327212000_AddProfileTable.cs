@@ -10,7 +10,7 @@ public sealed class AddProfileTable : Migration
         Execute.Sql(@"
             CREATE TABLE IF NOT EXISTS profiles
             (
-                profile_id BIGINT PRIMARY KEY REFERENCES users(id),
+                user_id BIGINT PRIMARY KEY REFERENCES users(id),
                 first_name TEXT NOT NULL,
                 last_name TEXT NOT NULL,
                 middle_name TEXT NULL,

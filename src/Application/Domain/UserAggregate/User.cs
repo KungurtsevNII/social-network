@@ -18,6 +18,8 @@ public sealed class User : AggregateRoot<long>
  
     public bool TwoFactorEnabled { get; private set; }
     
+    public Profile Profile { get; private set; }
+    
     private List<Role> _roles;
     public IReadOnlyList<Role> Roles => _roles;
     
@@ -34,7 +36,8 @@ public sealed class User : AggregateRoot<long>
         bool phoneNumberConfirmed,
         bool twoFactorEnabled,
         List<Role> userRoles, 
-        List<long> friends) : base(id)
+        List<long> friends, 
+        Profile profile) : base(id)
     {
         Email = email;
         NormalizedEmail = normalizedEmail;
@@ -45,6 +48,7 @@ public sealed class User : AggregateRoot<long>
         TwoFactorEnabled = twoFactorEnabled;
         _roles = userRoles;
         _friends = friends;
+        Profile = profile;
     }
     
     private User(
@@ -56,7 +60,8 @@ public sealed class User : AggregateRoot<long>
         bool phoneNumberConfirmed,
         bool twoFactorEnabled,
         List<Role> userRoles,
-        List<long> friends) : base(0)
+        List<long> friends, 
+        Profile profile) : base(0)
     {
         Email = email;
         NormalizedEmail = normalizedEmail;
@@ -67,6 +72,7 @@ public sealed class User : AggregateRoot<long>
         TwoFactorEnabled = twoFactorEnabled;
         _roles = userRoles;
         _friends = friends;
+        Profile = profile;
     }
 
     public static User Create(
@@ -85,7 +91,8 @@ public sealed class User : AggregateRoot<long>
             false,
             twoFactorEnabled,
             userRoles,
-            new List<long>());
+            new List<long>(),
+            new Profile(default, default, default, default, default, default,default, default));
     }
 
     public void AddFriend(long userFriendId)

@@ -34,7 +34,19 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
             command.TwoFactorEnabled, 
             new List<Role>());
 
-        await _userRepository.SaveAsync(user, ct);
+        var userId = await _userRepository.SaveAsync(user, ct);
+
+        var profile = Profile.Create(
+            userId,
+            command.Profile.FirstName,
+            command.Profile.LastName,
+            command.Profile.MiddleName,
+            command.Profile.Age,
+            command.Profile.Sex,
+            command.Profile.Interests,
+            command.Profile.City);
+        
+        await _userRepository.SaveProfileAsync(profile, ct);
         return Unit.Value;
     }
 }

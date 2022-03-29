@@ -16,7 +16,7 @@ public class UserRepository : IUserRepository
         _dbContext = dbContext;
     }
     
-    public async Task SaveAsync(User user, CancellationToken ct)
+    public async Task<long> SaveAsync(User user, CancellationToken ct)
     {
         var parameters = new DynamicParameters();
         parameters.Add("@email", user.Email);
@@ -29,7 +29,7 @@ public class UserRepository : IUserRepository
         
         using var pgConnection = _dbContext.CreateConnection();
         pgConnection.Open();
-        await pgConnection.ExecuteAsync(UserRepositorySql.SaveSql, parameters);
+        var userId = await pgConnection.QuerySingleAsync<long>(UserRepositorySql.SaveSql, parameters);
         await pgConnection.ExecuteAsync(
             UserRepositorySql.SaveFriendsSql, 
             user.Friends.Select(x => new 
@@ -37,6 +37,26 @@ public class UserRepository : IUserRepository
                 userId = user.Id, 
                 friendId = x 
             }));
+
+        return userId;
+    }
+    
+    public async Task SaveProfileAsync(Profile profile, CancellationToken ct)
+    {
+        var parameters = new DynamicParameters();
+
+        parameters.Add("@userId", profile.Id);
+        parameters.Add("@firstName", profile.FirstName);
+        parameters.Add("@lastName", profile.LastName);
+        parameters.Add("@middleName", profile.MiddleName);
+        parameters.Add("@age", profile.Age);
+        parameters.Add("@sex", profile.Sex);
+        parameters.Add("@interests", profile.Interests);
+        parameters.Add("@city", profile.City);
+        
+        using var pgConnection = _dbContext.CreateConnection();
+        pgConnection.Open();
+        await pgConnection.ExecuteAsync(UserRepositorySql.SaveProfileSql, parameters);
     }
     
     public async Task<User?> FindByEmailAsync(string normalizedEmail, CancellationToken ct)
@@ -54,7 +74,7 @@ public class UserRepository : IUserRepository
         }
         
         var userFriend = await GetUserFriends(pgConnection, userRecord.Id, ct);
-        
+        var userProfile = await GetUserProfile(pgConnection, userRecord.Id, ct);
         return new User(
             userRecord.Id,
             userRecord.Email,
@@ -65,7 +85,8 @@ public class UserRepository : IUserRepository
             userRecord.PhoneNumberConfirmed,
             userRecord.TwoFactorEnabled,
             new List<Role>(),
-            userFriend.ToList());
+            userFriend.ToList(),
+            userProfile);
     }
     
     public async Task<User?> FindByIdAsync(long id, CancellationToken ct)
@@ -83,6 +104,7 @@ public class UserRepository : IUserRepository
         }
 
         var userFriend = await GetUserFriends(pgConnection, userRecord.Id, ct);
+        var userProfile = await GetUserProfile(pgConnection, userRecord.Id, ct);
         
         return new User(
             userRecord.Id,
@@ -94,7 +116,24 @@ public class UserRepository : IUserRepository
             userRecord.PhoneNumberConfirmed,
             userRecord.TwoFactorEnabled,
             new List<Role>(),
-            userFriend.ToList());
+            userFriend.ToList(),
+            userProfile);
+    }
+
+    private async Task<Profile> GetUserProfile(IDbConnection pgConnection, long userRecordId, CancellationToken ct)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userRecordId, DbType.Int64);
+        var profileRecord = await pgConnection.QuerySingleOrDefaultAsync<ProfileRecord>(UserRepositorySql.FindProfileByIdSql, parameters);
+        return new Profile(
+            profileRecord.UserId,
+            profileRecord.FirstName,
+            profileRecord.LastName,
+            profileRecord.MiddleName,
+            profileRecord.Age,
+            profileRecord.Sex,
+            profileRecord.Interests,
+            profileRecord.City);
     }
 
     private async Task<IReadOnlyList<long>> GetUserFriends(IDbConnection pgConnection, long userId, CancellationToken ct)

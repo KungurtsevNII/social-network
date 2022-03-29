@@ -1,5 +1,6 @@
 ﻿using Application.Features.Users.Command.AddFriend;
 using Application.Features.Users.Queries.GetFriendsList;
+using Application.Features.Users.Queries.GetUserProfile;
 using Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -32,6 +33,13 @@ public sealed class UsersController : ControllerBase
     public Task<GetFriendsListQueryResult> GetFriendsList(CancellationToken ct)
     {
         var query = new GetFriendsListQuery(_currentUserContext.UserId);
+        return _mediator.Send(query, ct);
+    }
+    
+    [HttpGet("profile")]
+    public Task<GetUserProfileResult> GetUserProfile(CancellationToken ct)
+    {
+        var query = new GetUserProfileQuery(_currentUserContext.UserId);
         return _mediator.Send(query, ct);
     }
 }
