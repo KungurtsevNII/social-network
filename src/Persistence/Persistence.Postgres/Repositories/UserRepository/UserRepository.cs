@@ -89,6 +89,18 @@ public class UserRepository : IUserRepository
             userProfile);
     }
     
+    public async Task<bool> IsExistsAsync(string normalizedEmail, CancellationToken ct)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("normalizedEmail", normalizedEmail.ToLower(), DbType.String);
+        
+        using var pgConnection = _dbContext.CreateConnection();
+        pgConnection.Open();
+        var userRecord = await pgConnection.QuerySingleOrDefaultAsync<UserRecord>(UserRepositorySql.FindByNormalizedSql, parameters);
+
+        return userRecord is not null;
+    }
+    
     public async Task<User?> FindByIdAsync(long id, CancellationToken ct)
     {
         var parameters = new DynamicParameters();
@@ -125,6 +137,7 @@ public class UserRepository : IUserRepository
         var parameters = new DynamicParameters();
         parameters.Add("userId", userRecordId, DbType.Int64);
         var profileRecord = await pgConnection.QuerySingleOrDefaultAsync<ProfileRecord>(UserRepositorySql.FindProfileByIdSql, parameters);
+        
         return new Profile(
             profileRecord.UserId,
             profileRecord.FirstName,
