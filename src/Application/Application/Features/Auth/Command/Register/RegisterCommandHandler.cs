@@ -2,7 +2,7 @@
 using Application.Services;
 using Domain.UserAggregate;
 using MediatR;
-using Persistence.Abstractions.Repositories;
+using Persistence.Abstractions.Repositories.UserRepository;
 
 namespace Application.Features.Auth.Command.Register;
 

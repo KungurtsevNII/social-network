@@ -2,8 +2,8 @@
 using Dapper;
 using Domain.UserAggregate;
 using Persistence.Abstractions;
-using Persistence.Abstractions.Repositories;
-using Persistence.Postgres.Repositories.UserRepository.Records;
+using Persistence.Abstractions.Repositories.UserRepository;
+using Persistence.Abstractions.Repositories.UserRepository.Records;
 
 namespace Persistence.Postgres.Repositories.UserRepository;
 

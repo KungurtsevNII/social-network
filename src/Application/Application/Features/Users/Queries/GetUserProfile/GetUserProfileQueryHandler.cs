@@ -1,7 +1,7 @@
 ﻿using Application.Dtos;
 using Application.Exceptions;
 using MediatR;
-using Persistence.Abstractions.Repositories;
+using Persistence.Abstractions.Repositories.UserRepository;
 
 namespace Application.Features.Users.Queries.GetUserProfile;
 

@@ -1,7 +1,7 @@
 ﻿using Application.Exceptions;
 using Application.Services;
 using MediatR;
-using Persistence.Abstractions.Repositories;
+using Persistence.Abstractions.Repositories.UserRepository;
 
 namespace Application.Features.Auth.Command.Login;
 
