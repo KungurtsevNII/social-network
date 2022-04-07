@@ -8,4 +8,5 @@ public interface IUserRepository
     Task<long> SaveAsync(User user, CancellationToken ct);
     Task<User?> FindByIdAsync(long id, CancellationToken ct);
     Task SaveProfileAsync(Profile profile, CancellationToken ct);
+    Task<bool> IsExistsAsync(string normalizedEmail, CancellationToken ct);
 }

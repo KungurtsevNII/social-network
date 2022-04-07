@@ -21,8 +21,8 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
 
     public async Task<Unit> Handle(RegisterCommand command, CancellationToken ct)
     {
-        var existingUser = await _userRepository.FindByEmailAsync(command.Email, ct);
-        if (existingUser is not null)
+        var existingUser = await _userRepository.IsExistsAsync(command.Email, ct);
+        if (existingUser)
         {
             throw new UserAlreadyExistsException(command.Email);
         }
