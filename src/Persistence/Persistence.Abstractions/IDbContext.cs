@@ -4,5 +4,6 @@ namespace Persistence.Abstractions;
 
 public interface IDbContext
 {
-    IDbConnection CreateConnection();
+    IDbConnection CreateMasterConnection();
+    IDbConnection CreateReplicationConnection();
 }

@@ -8,7 +8,7 @@ public sealed class AddProfileNameIndex : Migration
     public override void Up()
     {
         Execute.Sql(@"
-           CREATE INDEX lower_last_and_first_name_inx ON profiles (lower(last_name) text_pattern_ops, lower(first_name) text_pattern_ops);
+           CREATE INDEX IF NOT EXISTS lower_last_and_first_name_inx ON profiles (lower(last_name) text_pattern_ops, lower(first_name) text_pattern_ops);
         ");
     }
 

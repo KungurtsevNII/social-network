@@ -21,7 +21,7 @@ public sealed class ProfileRepository : IProfileRepository
         parameters.Add("firstName", firstName.ToLower() + "%", DbType.String);
         parameters.Add("lastName", lastName.ToLower() + "%", DbType.String);
         
-        using var pgConnection = _dbContext.CreateConnection();
+        using var pgConnection = _dbContext.CreateReplicationConnection();
         pgConnection.Open();
         var profileRecords = await pgConnection.QueryAsync<ProfileRecord>(
             ProfileRepositorySql.FindByFirstAndLastNormalizedName, 

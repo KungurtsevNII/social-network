@@ -7,12 +7,16 @@ namespace Persistence.Postgres;
 
 public sealed class DbContext : IDbContext
 {
-    private readonly string _connectionString;
+    private readonly IReadOnlyDictionary<string, string> _connectionString;
     
     public DbContext(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("Main");
+        _connectionString = configuration
+            .GetSection("ConnectionStrings")
+            .GetChildren()
+            .ToDictionary(x => x.Key, y => y.Value);
     }
     
-    public IDbConnection CreateConnection() => new NpgsqlConnection(_connectionString);
+    public IDbConnection CreateMasterConnection() => new NpgsqlConnection(_connectionString["Main"]);
+    public IDbConnection CreateReplicationConnection() => new NpgsqlConnection(_connectionString["Replication"]);
 }

@@ -27,7 +27,7 @@ public class UserRepository : IUserRepository
         parameters.Add("@phoneNumberConfirmed", user.PhoneNumberConfirmed);
         parameters.Add("@twoFactorEnabled", user.TwoFactorEnabled);
         
-        using var pgConnection = _dbContext.CreateConnection();
+        using var pgConnection = _dbContext.CreateMasterConnection();
         pgConnection.Open();
         var userId = await pgConnection.QuerySingleAsync<long>(UserRepositorySql.SaveSql, parameters);
         await pgConnection.ExecuteAsync(
@@ -54,7 +54,7 @@ public class UserRepository : IUserRepository
         parameters.Add("@interests", profile.Interests);
         parameters.Add("@city", profile.City);
         
-        using var pgConnection = _dbContext.CreateConnection();
+        using var pgConnection = _dbContext.CreateMasterConnection();
         pgConnection.Open();
         await pgConnection.ExecuteAsync(UserRepositorySql.SaveProfileSql, parameters);
     }
@@ -64,7 +64,7 @@ public class UserRepository : IUserRepository
         var parameters = new DynamicParameters();
         parameters.Add("normalizedEmail", normalizedEmail.ToLower(), DbType.String);
         
-        using var pgConnection = _dbContext.CreateConnection();
+        using var pgConnection = _dbContext.CreateReplicationConnection();
         pgConnection.Open();
         var userRecord = await pgConnection.QuerySingleOrDefaultAsync<UserRecord>(UserRepositorySql.FindByNormalizedSql, parameters);
 
@@ -94,7 +94,7 @@ public class UserRepository : IUserRepository
         var parameters = new DynamicParameters();
         parameters.Add("normalizedEmail", normalizedEmail.ToLower(), DbType.String);
         
-        using var pgConnection = _dbContext.CreateConnection();
+        using var pgConnection = _dbContext.CreateReplicationConnection();
         pgConnection.Open();
         var userRecord = await pgConnection.QuerySingleOrDefaultAsync<UserRecord>(UserRepositorySql.FindByNormalizedSql, parameters);
 
@@ -106,7 +106,7 @@ public class UserRepository : IUserRepository
         var parameters = new DynamicParameters();
         parameters.Add("id", id, DbType.Int64);
         
-        using var pgConnection = _dbContext.CreateConnection();
+        using var pgConnection = _dbContext.CreateReplicationConnection();
         pgConnection.Open();
         var userRecord = await pgConnection.QuerySingleOrDefaultAsync<UserRecord>(UserRepositorySql.FindByIdSql, parameters);
 
