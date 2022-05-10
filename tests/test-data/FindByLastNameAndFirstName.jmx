@@ -101,7 +101,7 @@
           <collectionProp name="HeaderManager.headers">
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">Authorization</stringProp>
-              <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjEyMzEyMyIsInN1YiI6IjEwMDAwMSIsIm5iZiI6MTY0OTc0NTAyNiwiZXhwIjoxNjUwMzQ5ODI2LCJpYXQiOjE2NDk3NDUwMjZ9.9aoOwdtq9O8Q0X7A6rbq4p99zSDUL3pVa5XPW6IPr5gqgjdqoEclUm9qEz_9XTWE5K90IOr8SjbsCxDaWgWzCw</stringProp>
+              <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjEyMzEyMyIsInN1YiI6IjEwMDAwMSIsIm5iZiI6MTY1MDMwNjc0OSwiZXhwIjoxNjUwOTExNTQ5LCJpYXQiOjE2NTAzMDY3NDl9.t3gQGZI-d-6QthnusE6UDEA1cNlnW7fiP50JfCzYsbnmm-Iu9Rpu31fDT__Fw2uWYmcIt1k8024YLmIi-q0y3Q</stringProp>
             </elementProp>
           </collectionProp>
         </HeaderManager>

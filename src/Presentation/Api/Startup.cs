@@ -3,6 +3,7 @@ using Api.Services;
 using Application;
 using Application.Services;
 using FluentMigrator.Runner;
+using Kafka.Producers;
 using Persistence.Postgres;
 using Persistence.Postgres.Migrations;
 using Services.Auth;
@@ -29,6 +30,7 @@ public static class Startup
             .AddAuthServicesModule()
             .AddMigrationsModule(builder.Configuration)
             .AddPersistenceModule()
+            .AddKafkaProducers(builder.Configuration)
             .AddSwaggerDocumentation()
             .AddJwtTokenAuthentication(builder.Configuration);
 

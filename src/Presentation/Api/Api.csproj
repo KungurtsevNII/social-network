@@ -14,6 +14,7 @@
     
     <ItemGroup>
       <ProjectReference Include="..\..\Application\Application\Application.csproj" />
+      <ProjectReference Include="..\..\Kafka\Kafka.Producers\Kafka.Producers.csproj" />
       <ProjectReference Include="..\..\Persistence\Persistence.Postgres.Migrations\Persistence.Postgres.Migrations.csproj" />
       <ProjectReference Include="..\..\Persistence\Persistence.Postgres\Persistence.Postgres.csproj" />
       <ProjectReference Include="..\..\Services\Services.Auth\Services.Auth.csproj" />

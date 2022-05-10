@@ -2,6 +2,8 @@
 
 namespace SharedKernel;
 
-public abstract record DomainEventBase(
-    Guid EventId,
-    DateTime OccuredAt) : INotification;
+public abstract record DomainEventBase : INotification
+{
+    public Guid EventId { get; } = Guid.NewGuid();
+    public DateTime OccuredAt { get; } = DateTime.UtcNow;
+}
