@@ -10,8 +10,8 @@ public sealed class AddPostsTable : Migration
         Execute.Sql(@"
            CREATE TABLE IF NOT EXISTS posts
             (
-                id BIGSERIAL,
-                user_id UUID NOT NULL,
+                id UUID,
+                user_id BIGINT NOT NULL,
                 text TEXT NOT NULL,
                 PRIMARY KEY (id, user_id)                
             );

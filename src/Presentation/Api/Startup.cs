@@ -28,7 +28,6 @@ public static class Startup
             .AddHttpContextAccessor()
             .AddApplicationModule()
             .AddAuthServicesModule()
-            .AddMigrationsModule(builder.Configuration)
             .AddPersistenceModule()
             .AddKafkaProducers(builder.Configuration)
             .AddSwaggerDocumentation()
@@ -51,9 +50,25 @@ public static class Startup
     
     private static WebApplication UpdateDatabase(this WebApplication app)
     {
-        using var scope = app.Services.CreateScope();
-        var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-        runner.MigrateUp();
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddMigrationsModule(app.Configuration);
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+            runner.MigrateUp();
+        }
+
+        var serviceCollectionReplica = new ServiceCollection();
+        serviceCollectionReplica.AddReplicaMigrationsModule(app.Configuration);
+        var serviceProviderReplica = serviceCollectionReplica.BuildServiceProvider();
+        
+        using (var scope = serviceProviderReplica.CreateScope())
+        {
+            var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+            runner.MigrateUp();
+        }
 
         return app;
     }

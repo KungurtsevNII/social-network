@@ -18,11 +18,11 @@ public sealed class PostRepository : IPostRepository
     {
         var parameters = new DynamicParameters();
         parameters.Add("@id", post.Id);
-        parameters.Add("@user_id", post.UserId);
+        parameters.Add("@userId", post.UserId);
         parameters.Add("@text", post.Text);
         
         using var pgConnection = _dbContext.CreateMasterConnection();
         pgConnection.Open();
-        await pgConnection.QuerySingleAsync<long>(PostRepositorySql.SaveSql, parameters);
+        await pgConnection.ExecuteAsync(PostRepositorySql.SaveSql, parameters);
     }
 }

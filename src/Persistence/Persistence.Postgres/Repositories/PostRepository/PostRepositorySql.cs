@@ -3,13 +3,13 @@
 public static class PostRepositorySql
 {
     internal const string SaveSql = @"
-        INSERT INTO users (
+        INSERT INTO posts (
             id,
             user_id,
             text)
         VALUES(
             @id,
-            @user_id,
+            @userId,
             @text)
         ON CONFLICT (id, user_id) DO UPDATE SET 
             text = EXCLUDED.text;

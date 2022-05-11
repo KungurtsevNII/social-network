@@ -17,4 +17,15 @@ public static class MigrationsModule
             )
             .AddLogging(lb => lb.AddFluentMigratorConsole())
         ;
+    
+    public static IServiceCollection AddReplicaMigrationsModule(this IServiceCollection services, IConfiguration cfg) =>
+        services
+            .AddFluentMigratorCore()
+            .ConfigureRunner(rb => rb
+                .AddPostgres()
+                .WithGlobalConnectionString(cfg.GetConnectionString("Replication"))
+                .WithMigrationsIn(typeof(AddIdentityTables).Assembly)
+            )
+            .AddLogging(lb => lb.AddFluentMigratorConsole())
+    ;
 }

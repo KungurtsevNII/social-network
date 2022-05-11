@@ -1,8 +1,8 @@
 ﻿using Kafka.Producers.Abstractions.Base;
 
-namespace Kafka.Producers.Abstractions.NewsLine.Payloads;
+namespace Kafka.Producers.Abstractions.Post.Payloads;
 
 public sealed record PostCreatedPayload(
     long UserId,
-    long PostId,
+    Guid PostId,
     string PostText) : IPayload;

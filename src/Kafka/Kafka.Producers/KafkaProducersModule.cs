@@ -1,4 +1,4 @@
-﻿using Kafka.Producers.Abstractions.NewsLine;
+﻿using Kafka.Producers.Abstractions.Post;
 using Kafka.Producers.NewsLine;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +10,7 @@ public static class KafkaProducersModule
     public static IServiceCollection AddKafkaProducers(this IServiceCollection services, IConfiguration cfg)
     {
         services.Configure<NewsLineProducerOptions>(cfg.GetSection(NewsLineProducerOptions.OptionsPath));
-        services.AddSingleton<INewsLineProducer, NewsLineProducer>();
+        services.AddSingleton<IPostProducer, NewsLineProducer>();
         
         return services;
     }

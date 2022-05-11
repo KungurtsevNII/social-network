@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using Confluent.Kafka;
 using Kafka.Producers.Abstractions.Base;
-using Kafka.Producers.Abstractions.NewsLine;
+using Kafka.Producers.Abstractions.Post;
 using Microsoft.Extensions.Options;
 
 namespace Kafka.Producers.NewsLine;
 
-public sealed class NewsLineProducer : INewsLineProducer
+public sealed class NewsLineProducer : IPostProducer
 {
     private readonly NewsLineProducerOptions _options;
 
@@ -15,13 +15,12 @@ public sealed class NewsLineProducer : INewsLineProducer
         _options = options.Value ?? throw new ArgumentNullException(nameof(_options));
     }
 
-    public async Task ProduceAsync(string key, KafkaMessage? message, CancellationToken ct)
-     
+    public async Task ProduceAsync(string key, KafkaMessage message, CancellationToken ct)
     {
         using var producer = new ProducerBuilder<string, string>(_options.KafkaOptions).Build();
         try
         {
-            var produceResult =  await producer.ProduceAsync(
+            await producer.ProduceAsync(
                 _options.Topic, 
                 new Message<string, string>
                 {
@@ -31,7 +30,7 @@ public sealed class NewsLineProducer : INewsLineProducer
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Oops, something went wrong: {e}");
+            Console.WriteLine($"something went wrong: {e}");
         }
     }
 }
