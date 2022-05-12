@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Application.Features.Posts.Command.UpdateUsersNewsLine;
-using Confluent.Kafka;
 using Kafka.Consumers.Abstractions;
+using Kafka.Consumers.Abstractions.Base;
 using Kafka.Consumers.Abstractions.Post;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,25 +10,23 @@ using Microsoft.Extensions.Options;
 
 namespace Kafka.Consumers.Post;
 
-public sealed class PostConsumer : IPostConsumer
+public sealed class PostConsumer : ConsumerBase, IPostConsumer
 {
-    private readonly ILogger<PostConsumer> _logger;
     private readonly PostConsumerOptions _options;
     private readonly IServiceProvider _serviceProvider;
 
     public PostConsumer(
         IOptions<PostConsumerOptions> options, 
         ILogger<PostConsumer> logger, 
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider) : base(logger)
     {
-        _logger = logger;
         _serviceProvider = serviceProvider;
         _options = options.Value;
     }
 
     public async Task ConsumeAsync(CancellationToken ct)
     {
-        using var consumer = Create();
+        using var consumer = CreateConsumer(_options);
         consumer.Subscribe(_options.Topic);
 
         while (!ct.IsCancellationRequested)
@@ -57,31 +55,6 @@ public sealed class PostConsumer : IPostConsumer
         consumer.Close();
     }
 
-    private IConsumer<string, string> Create()
-    {
-        return new ConsumerBuilder<string, string>(_options.KafkaOptions)
-            .SetErrorHandler(
-                (_, e) => _logger.LogError(
-                    "[{Topic}] Consumer error: {ErrorCode},{ErrorReason}",
-                    _options.Topic,
-                    e.Code,
-                    e.Reason))
-            .SetPartitionsAssignedHandler(
-                (_, partitions) =>
-                    _logger.LogInformation(
-                        "[{Topic}] Assigned partitions: [{Partitions}]",
-                        _options.Topic,
-                        string.Join(", ", partitions))
-            )
-            .SetPartitionsRevokedHandler(
-                (_, partitions) =>
-                    _logger.LogInformation(
-                        "[{Topic}] Revoking assignment: [{Partitions}]",
-                        _options.Topic,
-                        string.Join(", ", partitions))
-            ).Build();
-    }
-
     private IRequest ConvertToMediatrRequest(KafkaMessage message)
     {
         switch (message.EventType)
@@ -98,6 +71,7 @@ public sealed class PostConsumer : IPostConsumer
             }
             default:
             {
+                Logger.LogError("Can not process message with type - {MessageType}", message.EventType);
                 throw new ArgumentOutOfRangeException(nameof(KafkaMessage));
             }
         }

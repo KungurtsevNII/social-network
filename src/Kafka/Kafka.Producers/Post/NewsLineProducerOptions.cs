@@ -1,10 +1,8 @@
-﻿namespace Kafka.Producers.Post;
+﻿using Kafka.Producers.Abstractions.Base;
 
-public sealed class NewsLineProducerOptions
+namespace Kafka.Producers.Post;
+
+public sealed class NewsLineProducerOptions : ProducerOptionsBase
 {
     public const string OptionsPath = "NewsLineKafkaProducer";
-
-    public Dictionary<string, string> KafkaOptions { get; set; } = new();
-    
-    public string Topic { get; set; } = string.Empty;
 }

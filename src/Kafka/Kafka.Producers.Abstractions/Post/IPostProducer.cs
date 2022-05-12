@@ -1,6 +1,4 @@
-﻿using Kafka.Producers.Abstractions.Base;
-
-namespace Kafka.Producers.Abstractions.Post;
+﻿namespace Kafka.Producers.Abstractions.Post;
 
 public interface IPostProducer
 {

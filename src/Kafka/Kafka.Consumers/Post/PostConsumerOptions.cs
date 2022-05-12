@@ -1,10 +1,8 @@
-﻿namespace Kafka.Consumers.Post;
+﻿using Kafka.Consumers.Abstractions.Base;
 
-public sealed class PostConsumerOptions
+namespace Kafka.Consumers.Post;
+
+public sealed class PostConsumerOptions : ConsumerOptionsBase
 {
     public const string OptionsPath = "PostConsumer";
-    
-    public Dictionary<string, string> KafkaOptions { get; set; } = new();
-    
-    public string Topic { get; set; } = string.Empty;
 }

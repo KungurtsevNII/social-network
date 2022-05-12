@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using Domain.PostAggregate.Events;
-using Kafka.Producers.Abstractions.Base;
+using Kafka.Producers.Abstractions.Message;
 using Kafka.Producers.Abstractions.Post;
 using Kafka.Producers.Abstractions.Post.Payloads;
 using MediatR;

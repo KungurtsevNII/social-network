@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using Confluent.Kafka;
-using Kafka.Producers.Abstractions.Base;
+﻿using Confluent.Kafka;
 using Kafka.Producers.Abstractions.Post;
 using Microsoft.Extensions.Options;
 
