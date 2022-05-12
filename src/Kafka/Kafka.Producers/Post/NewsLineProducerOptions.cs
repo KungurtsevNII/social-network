@@ -1,4 +1,4 @@
-﻿namespace Kafka.Producers.NewsLine;
+﻿namespace Kafka.Producers.Post;
 
 public sealed class NewsLineProducerOptions
 {

@@ -4,7 +4,7 @@ using Kafka.Producers.Abstractions.Base;
 using Kafka.Producers.Abstractions.Post;
 using Microsoft.Extensions.Options;
 
-namespace Kafka.Producers.NewsLine;
+namespace Kafka.Producers.Post;
 
 public sealed class NewsLineProducer : IPostProducer
 {
@@ -15,7 +15,7 @@ public sealed class NewsLineProducer : IPostProducer
         _options = options.Value ?? throw new ArgumentNullException(nameof(_options));
     }
 
-    public async Task ProduceAsync(string key, KafkaMessage message, CancellationToken ct)
+    public async Task ProduceAsync(string key, string message, CancellationToken ct)
     {
         using var producer = new ProducerBuilder<string, string>(_options.KafkaOptions).Build();
         try
@@ -25,7 +25,7 @@ public sealed class NewsLineProducer : IPostProducer
                 new Message<string, string>
                 {
                     Key = key,
-                    Value = JsonSerializer.Serialize(message)
+                    Value = message
                 }, ct);
         }
         catch (Exception e)

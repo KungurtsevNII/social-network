@@ -1,4 +1,5 @@
-﻿using Domain.PostAggregate.Events;
+﻿using System.Text.Json;
+using Domain.PostAggregate.Events;
 using Kafka.Producers.Abstractions.Base;
 using Kafka.Producers.Abstractions.Post;
 using Kafka.Producers.Abstractions.Post.Payloads;
@@ -18,8 +19,8 @@ public sealed class PublishPostCreatedKafkaEventEventHandler : INotificationHand
     public async Task Handle(PostCreatedDomainEvent domainEvent, CancellationToken ct)
     {
         var kafkaPayload = new PostCreatedPayload(domainEvent.UserId, domainEvent.PostId, domainEvent.Text);
-        var kafkaMessage = new KafkaMessage(PostEventType.Create, domainEvent.OccuredAt, kafkaPayload);
+        var kafkaMessage = new KafkaMessage<PostCreatedPayload>(PostEventType.Create, domainEvent.OccuredAt, kafkaPayload);
 
-        await _postProducer.ProduceAsync(domainEvent.PostId.ToString(), kafkaMessage, ct);
+        await _postProducer.ProduceAsync(domainEvent.PostId.ToString(), JsonSerializer.Serialize(kafkaMessage), ct);
     }
 }

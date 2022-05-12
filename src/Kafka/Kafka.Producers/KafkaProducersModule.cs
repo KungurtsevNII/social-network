@@ -1,5 +1,5 @@
 ﻿using Kafka.Producers.Abstractions.Post;
-using Kafka.Producers.NewsLine;
+using Kafka.Producers.Post;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

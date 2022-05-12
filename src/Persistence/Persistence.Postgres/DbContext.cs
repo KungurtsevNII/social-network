@@ -18,5 +18,5 @@ public sealed class DbContext : IDbContext
     }
     
     public IDbConnection CreateMasterConnection() => new NpgsqlConnection(_connectionString["Main"]);
-    public IDbConnection CreateReplicationConnection() => new NpgsqlConnection(_connectionString["Main"]);
+    public IDbConnection CreateReplicationConnection() => new NpgsqlConnection(_connectionString["Replication"]);
 }

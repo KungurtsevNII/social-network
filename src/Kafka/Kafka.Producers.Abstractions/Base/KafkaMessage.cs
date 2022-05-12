@@ -1,6 +1,6 @@
 ﻿namespace Kafka.Producers.Abstractions.Base;
 
-public sealed record KafkaMessage(
+public sealed record KafkaMessage<TPayload>(
     string EventType,
     DateTime OccuredAt,
-    IPayload Payload);
+    TPayload Payload) where TPayload : IPayload;
