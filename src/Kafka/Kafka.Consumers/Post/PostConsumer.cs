@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
-using Application.Features.Posts.Command.UpdateUsersNewsLine;
+using Application.Features.NewsLines.Command.UpdateUsersNewsLines;
 using Kafka.Consumers.Abstractions;
 using Kafka.Consumers.Abstractions.Base;
 using Kafka.Consumers.Abstractions.Post;
+using Kafka.Consumers.Abstractions.Post.Payloads;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -67,7 +68,7 @@ public sealed class PostConsumer : ConsumerBase, IPostConsumer
                     throw new ArgumentNullException(nameof(eventPayload));
                 }
                 
-                return new UpdateUsersNewsLineCommand(eventPayload.UserId, eventPayload.PostId);
+                return new UpdateUsersNewsLinesCommand(eventPayload.UserId, eventPayload.PostId);
             }
             default:
             {

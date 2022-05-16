@@ -23,6 +23,6 @@ public static class Startup
                     .AddAuthServicesModule()
                     .AddKafkaProducers(context.Configuration)
                     .AddKafkaConsumers(context.Configuration)
-                    .AddApplicationModule()
+                    .AddApplicationModule(context.Configuration)
                     .AddPersistenceModule());
 }

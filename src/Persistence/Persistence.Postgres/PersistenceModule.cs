@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Persistence.Abstractions;
+using Persistence.Abstractions.Repositories.NewsLineRepository;
 using Persistence.Abstractions.Repositories.PostRepository;
 using Persistence.Abstractions.Repositories.ProfileRepository;
 using Persistence.Abstractions.Repositories.UserRepository;
+using Persistence.Postgres.Repositories.NewsLineRepository;
 using Persistence.Postgres.Repositories.PostRepository;
 using Persistence.Postgres.Repositories.ProfileRepository;
 using Persistence.Postgres.Repositories.UserRepository;
@@ -17,6 +19,7 @@ public static class PersistenceModule
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProfileRepository, ProfileRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<INewsLineRepository, NewsLineRepository>();
         
         Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         return services;

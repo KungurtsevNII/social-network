@@ -100,7 +100,7 @@ public class UserRepository : IUserRepository
 
         return userRecord is not null;
     }
-    
+
     public async Task<User?> FindByIdAsync(long id, CancellationToken ct)
     {
         var parameters = new DynamicParameters();
@@ -130,6 +130,30 @@ public class UserRepository : IUserRepository
             new List<Role>(),
             userFriend.ToList(),
             userProfile);
+    }
+    
+    public async Task<long> GetFriendsCountAsync(long userId, CancellationToken ct)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userId, DbType.Int64);
+        
+        using var pgConnection = _dbContext.CreateReplicationConnection();
+        pgConnection.Open();
+        var friendsCount = await pgConnection.QuerySingleAsync<long>(UserRepositorySql.GetFriendsCountSql, parameters);
+
+        return friendsCount;
+    }
+    
+    public async Task<IReadOnlyList<long>> GetUserFriends(long userId, CancellationToken ct)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userId, DbType.Int64);
+        
+        using var pgConnection = _dbContext.CreateReplicationConnection();
+        pgConnection.Open();
+        
+        var friendsIds = await pgConnection.QueryAsync<long>(UserRepositorySql.FindFriendsIdsSql, parameters);
+        return friendsIds.ToList();
     }
 
     private async Task<Profile> GetUserProfile(IDbConnection pgConnection, long userRecordId, CancellationToken ct)

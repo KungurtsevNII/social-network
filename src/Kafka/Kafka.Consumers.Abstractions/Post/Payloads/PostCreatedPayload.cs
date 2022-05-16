@@ -1,4 +1,4 @@
-﻿namespace Kafka.Consumers.Abstractions.Post;
+﻿namespace Kafka.Consumers.Abstractions.Post.Payloads;
 
 public sealed record PostCreatedPayload(
     long UserId,

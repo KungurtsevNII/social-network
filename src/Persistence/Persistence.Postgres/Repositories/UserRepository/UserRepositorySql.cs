@@ -87,4 +87,9 @@ internal static class UserRepositorySql
             sex = EXCLUDED.sex,
             interests = EXCLUDED.interests,
             city = EXCLUDED.city;";
+    
+    internal const string GetFriendsCountSql = @"
+        SELECT COUNT(*)
+        FROM friends
+        WHERE user_id = @userId;";
 }

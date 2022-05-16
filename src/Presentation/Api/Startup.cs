@@ -26,7 +26,7 @@ public static class Startup
             .AddControllers().Services
             .AddScoped<ICurrentUserContext, CurrentUserContext>()
             .AddHttpContextAccessor()
-            .AddApplicationModule()
+            .AddApplicationModule(builder.Configuration)
             .AddAuthServicesModule()
             .AddPersistenceModule()
             .AddKafkaProducers(builder.Configuration)
