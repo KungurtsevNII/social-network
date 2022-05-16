@@ -1,6 +1,4 @@
-﻿using Kafka.Producers.Abstractions.Base;
-
-namespace Kafka.Producers.Abstractions.Message;
+﻿namespace Kafka.Producers.Abstractions.Message;
 
 public sealed record KafkaMessage<TPayload>(
     string EventType,

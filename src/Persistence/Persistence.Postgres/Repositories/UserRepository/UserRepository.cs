@@ -152,8 +152,14 @@ public class UserRepository : IUserRepository
         using var pgConnection = _dbContext.CreateReplicationConnection();
         pgConnection.Open();
         
-        var friendsIds = await pgConnection.QueryAsync<long>(UserRepositorySql.FindFriendsIdsSql, parameters);
-        return friendsIds.ToList();
+        var friendsRecords = await pgConnection.QueryAsync<FriendRecord>(UserRepositorySql.FindFriendsIdsSql, parameters);
+        var friendList = friendsRecords.ToList();
+        
+        var friends= friendList
+            .Select(x => x.FriendId)
+            .Union(friendList.Select(x => x.UserId));
+        
+        return friends.ToList();
     }
 
     private async Task<Profile> GetUserProfile(IDbConnection pgConnection, long userRecordId, CancellationToken ct)

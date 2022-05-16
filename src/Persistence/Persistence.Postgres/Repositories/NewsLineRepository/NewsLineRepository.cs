@@ -1,7 +1,9 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using Domain.NewsLineAggregate;
 using Persistence.Abstractions;
 using Persistence.Abstractions.Repositories.NewsLineRepository;
+using Persistence.Abstractions.Repositories.NewsLineRepository.Records;
 
 namespace Persistence.Postgres.Repositories.NewsLineRepository;
 
@@ -27,5 +29,25 @@ public sealed class NewsLineRepository : INewsLineRepository
                 postCreaterUserId = x.PostCreaterUserId,
                 newsLineOwnerUserId = x.NewsLineOwnerUserId
             }));
+    }
+
+    public async Task<IReadOnlyList<NewsLine>> GetNewsLinesBynNewsLineOwnerUserId(long newsLineOwnerUserId, CancellationToken ct)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("newsLineOwnerUserId", newsLineOwnerUserId, DbType.Int64);
+        
+        using var pgConnection = _dbContext.CreateReplicationConnection();
+        pgConnection.Open();
+        var newsLinesRecords = await pgConnection.QueryAsync<NewsLineRecord>(
+            NewsLineRepositorySql.GetNewsLinesBynNewsLineOwnerUserIdSql, 
+            parameters);
+        
+        var newsLines = newsLinesRecords.Select(x => new NewsLine(
+            x.Id,
+            x.PostId,
+            x.PostCreaterUserId,
+            x.NewsLineOwnerUserId)).ToList();
+        
+        return newsLines;
     }
 }

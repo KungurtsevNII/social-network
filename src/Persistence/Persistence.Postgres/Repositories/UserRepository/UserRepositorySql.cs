@@ -9,9 +9,9 @@ internal static class UserRepositorySql
         WHERE normalized_email = @normalizedEmail;";
     
     internal const string FindFriendsIdsSql = @"
-        SELECT friend_id
+        SELECT DISTINCT user_id, friend_id
         FROM friends
-        WHERE user_id = @userId;";
+        WHERE user_id = @userId OR friend_id = @userId;";
     
     internal const string FindByIdSql = @"
         SELECT id, email, normalized_email, email_confirmed,
@@ -89,7 +89,7 @@ internal static class UserRepositorySql
             city = EXCLUDED.city;";
     
     internal const string GetFriendsCountSql = @"
-        SELECT COUNT(*)
+        SELECT DISTINCT COUNT(*)
         FROM friends
-        WHERE user_id = @userId;";
+        WHERE user_id = @userId OR friend_id = @userId;";
 }
