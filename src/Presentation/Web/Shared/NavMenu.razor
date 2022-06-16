@@ -1,0 +1,48 @@
+﻿@using Web.States
+@inject IAuthenticationState _authenticationState
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Otus.SocialNetwork.Web</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        @if (_isLoggedIn)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="news-line-online">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Новости онлайн
+                </NavLink>
+            </div>
+        }
+    </nav>
+</div>
+
+@code {
+    private readonly CancellationTokenSource _cts = new();
+
+    private bool _collapseNavMenu = true;
+    private bool _isLoggedIn = false;
+
+    private string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        _collapseNavMenu = !_collapseNavMenu;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoggedIn = await _authenticationState.IsLoggedIn(_cts.Token);
+        _authenticationState.IsLoggedInChanged += (isLoggedIn) =>
+        {
+            _isLoggedIn = isLoggedIn;
+            StateHasChanged();
+        };
+    }
+}

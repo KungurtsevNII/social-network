@@ -3,15 +3,15 @@ using Application.Features.NewsLines.Command.UpdateUsersNewsLines;
 using Kafka.Consumers.Abstractions;
 using Kafka.Consumers.Abstractions.Base;
 using Kafka.Consumers.Abstractions.Post;
-using Kafka.Consumers.Abstractions.Post.Payloads;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PostCreatedPayload = Kafka.Consumers.Abstractions.NewsLineOnlineUpdater.Payloads.PostCreatedPayload;
 
 namespace Kafka.Consumers.Post;
 
-public sealed class PostConsumer : ConsumerBase, IPostConsumer
+public sealed class PostConsumer : ConsumerBase, IPostConsumer, IKafkaConsumer
 {
     private readonly PostConsumerOptions _options;
     private readonly IServiceProvider _serviceProvider;

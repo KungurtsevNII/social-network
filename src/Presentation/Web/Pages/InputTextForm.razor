@@ -1,0 +1,28 @@
+@using System.ComponentModel.DataAnnotations
+
+<div class="form-group row">
+    <label for="@Id" class="col-sm-2 col-form-label">@Label</label>
+    <div class="col-sm-10">
+        <InputText
+            class="form-control" id="@Id" Value="@Value" ValueChanged="ValueChanged" ValueExpression="@(() => Value)" type="@Type"/>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Type { get; set; } = "text";
+
+}

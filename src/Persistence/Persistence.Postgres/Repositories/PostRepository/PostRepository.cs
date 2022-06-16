@@ -46,7 +46,23 @@ public sealed class PostRepository : IPostRepository
                     x.CreatedAt))
             .ToList();
     }
-    
+
+    public async Task<Post> GetPostById(Guid id, CancellationToken ct)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("@id", id);
+
+        using var pgConnection = _dbContext.CreateReplicationConnection();
+        pgConnection.Open();
+        var postsRecord = await pgConnection.QuerySingleOrDefaultAsync<PostRecord>(PostRepositorySql.GetPostByIdSql, parameters);
+
+        return new Post(
+            postsRecord.Id, 
+            postsRecord.UserId, 
+            postsRecord.Text,
+            postsRecord.CreatedAt);
+    }
+
     public async Task<IReadOnlyList<Post>> GetPostsByUsersIds(IReadOnlyList<long> usersIds, CancellationToken ct)
     {
         var parameters = new DynamicParameters();

@@ -1,0 +1,52 @@
+@page "/users/login"
+@using System.ComponentModel.DataAnnotations
+@using Web.States
+@implements IDisposable
+@inject IAuthenticationState _authenticationState;
+
+<PageTitle>Вход в систему</PageTitle>
+
+<h1>Введите данные для входа</h1>
+
+<EditForm Model="this">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <InputTextForm Label="Email" @bind-Value="Email"/>
+    <InputTextForm Label="Пароль" @bind-Value="Password" type="password"/>
+</EditForm>
+
+<button class="btn btn-primary" @onclick="OnButtonClick">Продолжить</button>
+
+<div>@_result</div>
+
+@code {
+    private readonly CancellationTokenSource _cts = new();
+
+    [Required]
+    private string Email { get; set; } = string.Empty;
+
+    [Required]
+    private string Password { get; set; } = string.Empty;
+    
+    private string _result = string.Empty;
+
+    private async Task OnButtonClick()
+    {
+        try
+        {
+            await _authenticationState.LogIn(Email, Password, _cts.Token);
+            _result = "Успех!";
+        }
+        catch (Exception e)
+        {
+            _result = $"Провал!: {e}";
+        }
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+}

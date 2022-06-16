@@ -1,0 +1,64 @@
+@page "/users/registration"
+@using Web.Api
+@using Web.Api.Models
+@using Microsoft.AspNetCore.Components
+@implements IDisposable
+@inject ISocialNetworkAdapter _api
+@inject NavigationManager _navigation
+
+<PageTitle>Регистрация</PageTitle>
+
+<h1>Введите данные для регистрации</h1>
+
+<EditForm Model="_request">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <InputTextForm Id="Email" Label="Username" @bind-Value="_request.Email"/>
+    <InputTextForm Id="PhoneNumber" Label="Телефон" @bind-Value="_request.PhoneNumber"/>
+    <InputTextForm Label="Пароль" @bind-Value="_request.Password" type="password"/>
+    <InputTextForm Label="Имя" @bind-Value="_request.Profile.FirstName"/>
+    <InputTextForm Label="Фамилия" @bind-Value="_request.Profile.LastName"/>
+    <InputNumber Label="Возраст" @bind-Value="_request.Profile.Age"/>
+    <InputTextForm Label="Пол (М/Ж)" @bind-Value="_sex"/>
+    <InputTextForm Label="Интересы (через запятую)" @bind-Value="_request.Profile.Interest"/>
+    <InputTextForm Label="Город" @bind-Value="_request.Profile.City"/>
+</EditForm>
+
+<button class="btn btn-primary" @onclick="OnButtonClick">Продолжить</button>
+
+<div>@_result</div>
+
+@code {
+    private readonly CancellationTokenSource _cts = new();
+    private readonly Register.Request _request = new();
+
+    private string _sex = string.Empty;
+
+    private string _result = string.Empty;
+
+    private async Task OnButtonClick()
+    {
+        _request.Profile.Sex = _sex.ToUpper() == "М"
+            ? Sex.Male
+            : _sex.ToUpper() == "Ж"
+                ? Sex.Female
+                : Sex.Male;
+
+        try
+        {
+            await _api.RegisterAsync(_request, _cts.Token);
+            _navigation.NavigateTo("/users");
+        }
+        catch (Exception e)
+        {
+            _result = $"Провал!: {e}";
+        }
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+}

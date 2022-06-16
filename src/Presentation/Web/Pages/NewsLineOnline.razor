@@ -1,0 +1,52 @@
+﻿@page "/news-line-online"
+@inject ITokenStorage _tokenStorage
+@using Microsoft.AspNetCore.SignalR.Client
+@using Web.Storages
+@implements IAsyncDisposable
+
+<PageTitle>NewsLineOnline</PageTitle>
+
+<h1>News line online</h1>
+
+<ul id="messagesList">
+    @foreach (var post in posts)
+    {
+        <li>@post</li>
+    }
+</ul>
+
+
+@code {
+    private HubConnection? hubConnection;
+    private List<string> posts = new List<string>{"10001 : test"};
+    private string? userInput;
+    private string? messageInput;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await _tokenStorage.Get(CancellationToken.None);
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl("https://localhost:7201/post-hub", opt =>
+            {
+                opt.AccessTokenProvider = () => Task.FromResult(token);
+            })
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            posts.Add(encodedMsg);
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

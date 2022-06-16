@@ -1,9 +1,13 @@
 ﻿using Api.Extensions;
+using Api.HostedServices;
 using Api.Services;
 using Application;
 using Application.Services;
 using FluentMigrator.Runner;
+using Hubs;
+using Kafka.Consumers;
 using Kafka.Producers;
+using Microsoft.AspNetCore.SignalR;
 using Persistence.Postgres;
 using Persistence.Postgres.Migrations;
 using Services.Auth;
@@ -24,14 +28,20 @@ public static class Startup
     {
         builder.Services
             .AddControllers().Services
+            .AddSignalR().Services
             .AddScoped<ICurrentUserContext, CurrentUserContext>()
             .AddHttpContextAccessor()
+            .AddCustomCors()
             .AddApplicationModule(builder.Configuration)
             .AddAuthServicesModule()
             .AddPersistenceModule()
             .AddKafkaProducers(builder.Configuration)
+            .AddKafkaConsumers(builder.Configuration)
             .AddSwaggerDocumentation()
-            .AddJwtTokenAuthentication(builder.Configuration);
+            .AddJwtTokenAuthentication(builder.Configuration)
+            .AddSingleton<IUserIdProvider, CustomUserIdProvider>()
+            .AddHostedService<PostObserver>()
+            ;
 
         return builder;
     }
@@ -44,7 +54,9 @@ public static class Startup
         
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseCors("_allowSpecificOrigins");
         app.MapControllers();
+        app.MapHub<PostHub>("/post-hub");
         return app;
     }
     

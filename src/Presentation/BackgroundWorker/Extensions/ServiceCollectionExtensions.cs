@@ -6,6 +6,6 @@ internal static class ServiceCollectionExtensions
 {
     internal static IServiceCollection AddHostedServices(this IServiceCollection services) =>
         services
-            .AddHostedService<PostConsumer>()
+            .AddHostedService<KafkaConsumers>()
         ;
 }

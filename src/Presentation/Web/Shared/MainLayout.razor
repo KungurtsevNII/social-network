@@ -1,0 +1,48 @@
+﻿@using Web.States
+@inherits LayoutComponentBase
+@inject IAuthenticationState _auth
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu/>
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            @if (!_isLoggedIn)
+            {
+                <a href="users/registration">Зарегистрироваться</a>
+                <a href="users/login">Войти</a>
+            }
+            else
+            {
+                <a onclick="@LogOut">Выйти</a>
+            }
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    private readonly CancellationTokenSource _cts = new();
+
+    private bool _isLoggedIn;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoggedIn = await _auth.IsLoggedIn(_cts.Token);
+        _auth.IsLoggedInChanged += (isLoggedIn) =>
+        {
+            _isLoggedIn = isLoggedIn;
+            StateHasChanged();
+        };
+    }
+
+    private Task LogOut()
+    {
+        return _auth.LogOut(_cts.Token);
+    }
+}

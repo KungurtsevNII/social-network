@@ -14,10 +14,13 @@
     
     <ItemGroup>
       <ProjectReference Include="..\..\Application\Application\Application.csproj" />
+      <ProjectReference Include="..\..\Kafka\Kafka.Consumers.Abstractions\Kafka.Consumers.Abstractions.csproj" />
+      <ProjectReference Include="..\..\Kafka\Kafka.Consumers\Kafka.Consumers.csproj" />
       <ProjectReference Include="..\..\Kafka\Kafka.Producers\Kafka.Producers.csproj" />
       <ProjectReference Include="..\..\Persistence\Persistence.Postgres.Migrations\Persistence.Postgres.Migrations.csproj" />
       <ProjectReference Include="..\..\Persistence\Persistence.Postgres\Persistence.Postgres.csproj" />
       <ProjectReference Include="..\..\Services\Services.Auth\Services.Auth.csproj" />
+      <ProjectReference Include="..\Hubs\Hubs.csproj" />
     </ItemGroup>
 
     <ItemGroup>

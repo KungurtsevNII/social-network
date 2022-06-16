@@ -2,11 +2,11 @@ using Kafka.Consumers.Abstractions.Post;
 
 namespace BackgroundWorker.HostedServices;
 
-public class PostConsumer : BackgroundService
+public class KafkaConsumers : BackgroundService
 {
     private readonly IPostConsumer _consumer;
 
-    public PostConsumer(IPostConsumer consumer)
+    public KafkaConsumers(IPostConsumer consumer)
     {
         _consumer = consumer;
     }

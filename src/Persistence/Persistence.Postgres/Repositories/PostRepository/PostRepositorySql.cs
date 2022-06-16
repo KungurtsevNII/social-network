@@ -27,6 +27,16 @@ public static class PostRepositorySql
         WHERE id = ANY(@ids);
     ";
     
+    internal const string GetPostByIdSql = @"
+        SELECT 
+            id,
+            user_id,
+            text,
+            created_at
+        FROM posts
+        WHERE id = @id;
+    ";
+    
     internal const string GetCelebrityPostsSql = @"
         SELECT 
             id,
